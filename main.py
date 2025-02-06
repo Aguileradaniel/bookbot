@@ -1,10 +1,8 @@
 def main():
-    with open("./books/frankenstein.txt") as f:
+    filepath = "books/frankenstein.txt"
+    with open(filepath) as f:
         file_contents = f.read()
-        print(count_words(file_contents))
-        charcount = count_chars(file_contents)
-        print(charcount)
-        print(dict_to_list_of_dicts(charcount))
+        print_report(file_contents,filepath)
 
 def count_words(text: str) -> int:
     return len(text.split())
@@ -22,8 +20,25 @@ def count_chars(text: str) -> dict:
 def dict_to_list_of_dicts(dict:dict) -> list:
     return_list = []
     for char in list(dict):
-        if char.isalpha():
-            return_list.append({"letter":char,"count":dict[char]})
+        return_list.append({"char":char,"count":dict[char]})
     return return_list
+
+def order_char_list(char_list:list[dict])->list[dict]:
+    order_fn = lambda dict : dict["count"]
+    char_list.sort(reverse=True,key=order_fn)
+    return char_list
+
+def print_report(book:str, path:str)->None:
+    wordcount = count_words(book)
+    charlist = order_char_list(dict_to_list_of_dicts(count_chars(book)))
+
+    print(f"--- Begin report of {path} ---")
+    print(f"{wordcount} words found in the document")
+
+    for charcount in charlist:
+        if charcount["char"].isalpha():
+            print("The '" + charcount["char"] + "' character was found " + str(charcount["count"]) + " times")
+    
+    print("--- End report ---")
 
 main()
